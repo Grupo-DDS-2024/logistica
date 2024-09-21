@@ -202,6 +202,24 @@ public RutaDTO agregar(RutaDTO rutaDTO){
         }
     }
 
+    public long cantRutas(){
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        repositorioRuta.setEntityManager(entityManager);
+        Long count = 0L;
+        entityManager.getTransaction().begin();
+        try{
+            count = (Long) entityManager.createQuery("SELECT COUNT(id) FROM Ruta").getSingleResult();
+            entityManager.getTransaction().commit();
+        }catch (RuntimeException e){
+            if(entityManager.getTransaction().isActive())
+                entityManager.getTransaction().rollback();
+         throw e;
+        }finally {
+            entityManager.close();
+        }
+        return count;
+    }
+
 
 @Override
 public void setHeladerasProxy(FachadaHeladeras fachadaHeladeras){this.fachadaHeladeras = fachadaHeladeras;}

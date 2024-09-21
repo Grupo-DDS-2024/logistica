@@ -11,6 +11,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.javalin.Javalin;
 import io.javalin.json.JavalinJackson;
+import io.javalin.micrometer.MicrometerPlugin;
+import utils.DataDogUtils;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -21,6 +23,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class WebApp {
 
@@ -38,22 +41,38 @@ public class WebApp {
         fachada.setViandasProxy(new ViandasProxy(objectMapper));
         fachada.setHeladerasProxy(new HeladeraProxy(objectMapper));
 
+        var DDUtils = new DataDogUtils("Logistica");
+        var registro = DDUtils.getRegistro();
+
+        // Metricas
+        final var gauge = registro.gauge("dds.unGauge", new AtomicInteger(0));
+
+        // Config
+        final var micrometerPlugin = new MicrometerPlugin(config -> config.registry = registro);
+
+
+
         var port = Integer.parseInt(env.getOrDefault("PORT", "8083"));
 
         var app = Javalin.create(config -> {
+            // Configurar el JSON mapper con Jackson
             config.jsonMapper(new JavalinJackson().updateMapper(mapper -> {
                 configureObjectMapper(mapper);
             }));
+
+            // Registrar el plugin de Micrometer
+            config.registerPlugin(micrometerPlugin);
         }).start(port);
+
         app.get("/", ctx -> ctx.result("HOLA MUNDO"));
 
         app.get("/rutas", new ListaRutasController(fachada));
         app.get("/rutas/{rutaID}", new BuscarRutaXIDController(fachada));
-        app.post("/rutas", new AgregarRutasController(fachada));
+        app.post("/rutas", new AgregarRutasController(fachada,registro));
         app.get("/traslados", new ListaTrasladosController(fachada));
         app.patch("/traslados/{trasladoId}", new modificarEstadoController(fachada));
         app.get("/traslados/{trasladoId}", new TrasladoXIdController(fachada));
-        app.post("/traslados", new AgregarTrasladosController(fachada));
+        app.post("/traslados", new AgregarTrasladosController(fachada,registro));
         app.post("/depositar/{trasladoId}", new DepositarCotroller(fachada));
         app.post("/retirar/{trasladoId}", new RetirarController(fachada));
         app.get("/traslados/search/{colaboradorId}", new ListaTrasladosXColaborador(fachada));
