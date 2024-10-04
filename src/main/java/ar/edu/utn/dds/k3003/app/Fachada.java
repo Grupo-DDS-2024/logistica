@@ -130,7 +130,7 @@ public RutaDTO agregar(RutaDTO rutaDTO){
         Traslado traslado = repositorioTraslado.buscarXId(trasladoId);
         RetiroDTO retiro = new RetiroDTO(traslado.getQrVianda(), "321", traslado.getRuta().getHeladeraOrigen());
         fachadaHeladeras.retirar(retiro);
-        //fachadaViandas.modificarEstado(traslado.getQrVianda(), EstadoViandaEnum.EN_TRASLADO);
+        fachadaViandas.modificarEstado(traslado.getQrVianda(), EstadoViandaEnum.EN_TRASLADO);
         repositorioTraslado.getEntityManager().getTransaction().commit();
         repositorioTraslado.getEntityManager().close();
         this.modificarEstadoTraslado(trasladoId,EstadoTrasladoEnum.EN_VIAJE);
@@ -149,7 +149,7 @@ public RutaDTO agregar(RutaDTO rutaDTO){
     }
     fachadaHeladeras.depositar(traslado.getHeladeraDestino(), traslado.getQrVianda());
     fachadaViandas.modificarHeladera(traslado.getQrVianda(),traslado.getHeladeraDestino());
-    //fachadaViandas.modificarEstado(traslado.getQrVianda(), EstadoViandaEnum.DEPOSITADA);
+    fachadaViandas.modificarEstado(traslado.getQrVianda(), EstadoViandaEnum.DEPOSITADA);
     repositorioTraslado.getEntityManager().getTransaction().commit();
     repositorioTraslado.getEntityManager().close();
     this.modificarEstadoTraslado(trasladoId,EstadoTrasladoEnum.ENTREGADO);

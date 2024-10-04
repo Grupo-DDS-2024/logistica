@@ -11,10 +11,10 @@ public interface ViandasRetrofitClient {
     Call<ViandaDTO> get(@Path("qr") String qr);
 
     @PATCH("viandas/{qr}")
-    Call<ViandaDTO> modificarHeladera(@Path("qr") String qr, @Query("heladeraId") int heladeraDestino);
+    Call<ViandaDTO> modificarHeladera(@Path("qr") String qr, @Body int heladeraDestino);
 
-    @PATCH("viandas/{qr}")
-    Call<ViandaDTO> modificarEstado(@Path("qr") String qr, @Query("estado") EstadoViandaEnum status);
+    @PATCH("viandas/{qr}/estado")
+    Call<ViandaDTO> modificarEstado(@Path("qr") String qr, @Body EstadoViandaEnum status);
 
 
 }
