@@ -17,7 +17,9 @@ public class ListaTrasladosXColaborador implements Handler {
     @Override
     public void handle(@NotNull Context context) throws Exception {
         Long colaboradorId = Long.parseLong(context.pathParam("colaboradorId"));
-        List<TrasladoDTO> traslados = fachada.findByColaboradorId(colaboradorId);
+        Integer mes = Integer.parseInt(context.queryParam("mes"));
+        Integer anio = Integer.parseInt(context.queryParam("anio"));
+        List<TrasladoDTO> traslados = fachada.trasladosDeColaborador(colaboradorId,mes,anio);
         context.json(traslados);
     }
 }

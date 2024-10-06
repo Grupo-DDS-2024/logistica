@@ -12,10 +12,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.javalin.Javalin;
 import io.javalin.json.JavalinJackson;
 import io.javalin.micrometer.MicrometerPlugin;
-import utils.DataDogUtils;
+import ar.edu.utn.dds.k3003.utils.DataDogUtils;
 
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.text.SimpleDateFormat;
@@ -33,6 +31,7 @@ public class WebApp {
     String URL_COLABORADORES;
 
     public static EntityManagerFactory entityManagerFactory;
+
     public static void main(String[] args) {
         startEntityManagerFactory();
         var env = System.getenv();
@@ -45,11 +44,10 @@ public class WebApp {
         var registro = DDUtils.getRegistro();
 
         // Metricas
-        final var gauge = registro.gauge("dds.unGauge", new AtomicInteger(0));
+        final var gauge = registro.gauge("ddsLogistica.unGauge", new AtomicInteger(0));
 
         // Config
         final var micrometerPlugin = new MicrometerPlugin(config -> config.registry = registro);
-
 
 
         var port = Integer.parseInt(env.getOrDefault("PORT", "8083"));
@@ -68,15 +66,15 @@ public class WebApp {
 
         app.get("/rutas", new ListaRutasController(fachada));
         app.get("/rutas/{rutaID}", new BuscarRutaXIDController(fachada));
-        app.post("/rutas", new AgregarRutasController(fachada,registro));
+        app.post("/rutas", new AgregarRutasController(fachada, registro));
         app.get("/traslados", new ListaTrasladosController(fachada));
         app.patch("/traslados/{trasladoId}", new modificarEstadoController(fachada));
         app.get("/traslados/{trasladoId}", new TrasladoXIdController(fachada));
-        app.post("/traslados", new AgregarTrasladosController(fachada,registro));
+        app.post("/traslados", new AgregarTrasladosController(fachada, registro));
         app.post("/depositar/{trasladoId}", new DepositarCotroller(fachada));
         app.post("/retirar/{trasladoId}", new RetirarController(fachada));
         app.get("/traslados/search/{colaboradorId}", new ListaTrasladosXColaborador(fachada));
-        app.get("/clear",new DBController(fachada));
+        app.get("/clear", new DBController(fachada));
     }
 
     public static ObjectMapper createObjectMapper() {
@@ -98,18 +96,17 @@ public class WebApp {
 // https://stackoverflow.com/questions/8836834/read-environment-variables-in-persistence-xml-file
         Map<String, String> env = System.getenv();
         Map<String, Object> configOverrides = new HashMap<String, Object>();
-        String[] keys = new String[] { "javax.persistence.jdbc.url", "javax.persistence.jdbc.user",
+        String[] keys = new String[]{"javax.persistence.jdbc.url", "javax.persistence.jdbc.user",
                 "javax.persistence.jdbc.password", "javax.persistence.jdbc.driver", "hibernate.hbm2ddl.auto",
-                "hibernate.connection.pool_size", "hibernate.show_sql" };
+                "hibernate.connection.pool_size", "hibernate.show_sql"};
         for (String key : keys) {
             if (env.containsKey(key)) {
                 String value = env.get(key);
                 configOverrides.put(key, value);
             }
         }
-         entityManagerFactory = Persistence.createEntityManagerFactory("defaultdb", configOverrides);
+        entityManagerFactory = Persistence.createEntityManagerFactory("defaultdb", configOverrides);
     }
-
 
 
 }

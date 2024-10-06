@@ -9,8 +9,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class ListaTrasladosController implements Handler {
     private Fachada fachada;
+
     public ListaTrasladosController(Fachada fachada) {
-        this.fachada=fachada;
+        this.fachada = fachada;
     }
 
     @Override

@@ -18,8 +18,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-public class HeladeraProxy  implements FachadaHeladeras {
-
+public class HeladeraProxy implements FachadaHeladeras {
 
 
     private final String endpoint;
@@ -47,14 +46,14 @@ public class HeladeraProxy  implements FachadaHeladeras {
     @SneakyThrows
     @Override
     public void depositar(Integer integer, String s) throws NoSuchElementException {
-        ViandaDTO viandaDTO = new ViandaDTO(s,null,null,null,integer);
+        ViandaDTO viandaDTO = new ViandaDTO(s, null, null, null, integer);
 
         boolean exito = false;
         Response<Void> execute = service.depositar(viandaDTO).execute();
 
-        if(execute.isSuccessful()){
-             execute.body();
-             exito = true;
+        if (execute.isSuccessful()) {
+            execute.body();
+            exito = true;
         }
         if (execute.code() == HttpStatus.BAD_REQUEST.getCode()) {
             throw new NoSuchElementException("No se pudo depositar la vianda " + s);
@@ -71,7 +70,7 @@ public class HeladeraProxy  implements FachadaHeladeras {
     public void retirar(RetiroDTO retiroDTO) throws NoSuchElementException {
         Response<Void> execute = service.retirar(retiroDTO).execute();
         boolean exito = false;
-        if(execute.isSuccessful()){
+        if (execute.isSuccessful()) {
             execute.body();
             exito = true;
         }

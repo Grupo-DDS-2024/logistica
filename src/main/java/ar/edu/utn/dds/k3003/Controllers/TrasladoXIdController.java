@@ -8,8 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class TrasladoXIdController implements Handler {
     private Fachada fachada;
+
     public TrasladoXIdController(Fachada fachada) {
-        this.fachada=fachada;
+        this.fachada = fachada;
     }
 
     @Override

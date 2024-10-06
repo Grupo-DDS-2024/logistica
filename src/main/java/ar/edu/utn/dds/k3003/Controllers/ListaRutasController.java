@@ -8,12 +8,12 @@ import org.jetbrains.annotations.NotNull;
 public class ListaRutasController implements Handler {
     private Fachada fachada;
 
-    public ListaRutasController(Fachada fachada){
-        this.fachada=fachada;
+    public ListaRutasController(Fachada fachada) {
+        this.fachada = fachada;
     }
 
     @Override
     public void handle(@NotNull Context context) throws Exception {
-            context.json(fachada.rutas());
+        context.json(fachada.rutas());
     }
 }

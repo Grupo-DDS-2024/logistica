@@ -10,6 +10,7 @@ import java.util.NoSuchElementException;
 
 public class RetirarController implements Handler {
     private Fachada fachada;
+
     public RetirarController(Fachada fachada) {
         this.fachada = fachada;
     }
@@ -17,11 +18,12 @@ public class RetirarController implements Handler {
     @Override
     public void handle(@NotNull Context context) throws Exception {
 
-        try{Long trasladoId = Long.parseLong(context.pathParam("trasladoId"));
+        try {
+            Long trasladoId = Long.parseLong(context.pathParam("trasladoId"));
             fachada.trasladoRetirado(trasladoId);
             context.result("Vianda retirada correctamente");
-            } catch (NoSuchElementException e){
-                throw  new BadRequestResponse(e.getMessage());
+        } catch (NoSuchElementException e) {
+            throw new BadRequestResponse(e.getMessage());
         }
 
     }

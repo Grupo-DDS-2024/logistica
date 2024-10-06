@@ -28,43 +28,45 @@ public class Fachada implements FachadaLogistica {
     private FachadaViandas fachadaViandas;
     private FachadaHeladeras fachadaHeladeras;
 
-    public Fachada(EntityManagerFactory entityManagerFactory){
+    public Fachada(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
         this.repositorioRuta = new RepositorioRuta();
         this.rutaMapper = new RutaMapper();
         this.repositorioTraslado = new RepositorioTraslado();
         this.trasladoMapper = new TrasladoMapper();
     }
-    public Fachada(){
+
+    public Fachada() {
         this.repositorioRuta = new RepositorioRuta();
         this.rutaMapper = new RutaMapper();
         this.repositorioTraslado = new RepositorioTraslado();
         this.trasladoMapper = new TrasladoMapper();
     }
-@Override
-public RutaDTO agregar(RutaDTO rutaDTO){
-    EntityManager entityManager = entityManagerFactory.createEntityManager();
-    repositorioRuta.setEntityManager(entityManager);
-    repositorioRuta.getEntityManager().getTransaction().begin();
-    Ruta ruta = new Ruta(rutaDTO.getColaboradorId(), rutaDTO.getHeladeraIdOrigen(), rutaDTO.getHeladeraIdDestino());
-    ruta = this.repositorioRuta.guardar(ruta);
-    repositorioRuta.getEntityManager().getTransaction().commit();
-    repositorioRuta.getEntityManager().close();
-    return rutaMapper.mapear(ruta);
-}
 
-@Override
-    public TrasladoDTO buscarXId(Long trasladoID) throws NoSuchElementException{
-    EntityManager entityManager = entityManagerFactory.createEntityManager();
-    repositorioTraslado.setEntityManager(entityManager);
+    @Override
+    public RutaDTO agregar(RutaDTO rutaDTO) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        repositorioRuta.setEntityManager(entityManager);
+        repositorioRuta.getEntityManager().getTransaction().begin();
+        Ruta ruta = new Ruta(rutaDTO.getColaboradorId(), rutaDTO.getHeladeraIdOrigen(), rutaDTO.getHeladeraIdDestino());
+        ruta = this.repositorioRuta.guardar(ruta);
+        repositorioRuta.getEntityManager().getTransaction().commit();
+        repositorioRuta.getEntityManager().close();
+        return rutaMapper.mapear(ruta);
+    }
+
+    @Override
+    public TrasladoDTO buscarXId(Long trasladoID) throws NoSuchElementException {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        repositorioTraslado.setEntityManager(entityManager);
         repositorioTraslado.getEntityManager().getTransaction().begin();
         TrasladoDTO traslado = trasladoMapper.mapear(repositorioTraslado.buscarXId(trasladoID));
         repositorioTraslado.getEntityManager().getTransaction().commit();
-    repositorioTraslado.getEntityManager().close();
-        return  traslado;
-}
+        repositorioTraslado.getEntityManager().close();
+        return traslado;
+    }
 
-    public  RutaDTO buscarRutaXId(Long rutaID) throws NoSuchElementException{
+    public RutaDTO buscarRutaXId(Long rutaID) throws NoSuchElementException {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         repositorioTraslado.setEntityManager(entityManager);
         repositorioRuta.getEntityManager().getTransaction().begin();
@@ -75,32 +77,32 @@ public RutaDTO agregar(RutaDTO rutaDTO){
     }
 
 
-@Override
-    public TrasladoDTO asignarTraslado(TrasladoDTO trasladoDTO) throws TrasladoNoAsignableException{
-    EntityManager entityManager = entityManagerFactory.createEntityManager();
-    repositorioTraslado.setEntityManager(entityManager);
-    repositorioRuta.setEntityManager(entityManager);
-    repositorioTraslado.getEntityManager().getTransaction().begin();
-    ViandaDTO viandaDTO = fachadaViandas.buscarXQR(trasladoDTO.getQrVianda());
-    Random random = new Random();
-    List<Ruta> rutasPosibles = repositorioRuta.buscarXHeladera(trasladoDTO.getHeladeraOrigen(), trasladoDTO.getHeladeraDestino());
-    if(rutasPosibles.isEmpty()){
-        entityManager.getTransaction().rollback();
-        entityManager.close();
-        throw new TrasladoNoAsignableException("No se encontraron rutas posibles para el traslado");
-    }
-    Ruta ruta = rutasPosibles.get(random.nextInt(rutasPosibles.size()));
-    Traslado traslado = new Traslado(viandaDTO.getCodigoQR(), EstadoTrasladoEnum.ASIGNADO, trasladoDTO.getFechaTraslado(), ruta);
-    repositorioTraslado.guardar(traslado);
-    repositorioTraslado.getEntityManager().getTransaction().commit();
-    repositorioTraslado.getEntityManager().close();
-    repositorioRuta.getEntityManager().close();
-    return trasladoMapper.mapear(traslado);
+    @Override
+    public TrasladoDTO asignarTraslado(TrasladoDTO trasladoDTO) throws TrasladoNoAsignableException {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        repositorioTraslado.setEntityManager(entityManager);
+        repositorioRuta.setEntityManager(entityManager);
+        repositorioTraslado.getEntityManager().getTransaction().begin();
+        ViandaDTO viandaDTO = fachadaViandas.buscarXQR(trasladoDTO.getQrVianda());
+        Random random = new Random();
+        List<Ruta> rutasPosibles = repositorioRuta.buscarXHeladera(trasladoDTO.getHeladeraOrigen(), trasladoDTO.getHeladeraDestino());
+        if (rutasPosibles.isEmpty()) {
+            entityManager.getTransaction().rollback();
+            entityManager.close();
+            throw new TrasladoNoAsignableException("No se encontraron rutas posibles para el traslado");
+        }
+        Ruta ruta = rutasPosibles.get(random.nextInt(rutasPosibles.size()));
+        Traslado traslado = new Traslado(viandaDTO.getCodigoQR(), EstadoTrasladoEnum.ASIGNADO, trasladoDTO.getFechaTraslado(), ruta);
+        repositorioTraslado.guardar(traslado);
+        repositorioTraslado.getEntityManager().getTransaction().commit();
+        repositorioTraslado.getEntityManager().close();
+        repositorioRuta.getEntityManager().close();
+        return trasladoMapper.mapear(traslado);
 
     }
 
 
-    public List<TrasladoDTO> findByColaboradorId(Long colaboradorId){
+    public List<TrasladoDTO> findByColaboradorId(Long colaboradorId) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         repositorioTraslado.setEntityManager(entityManager);
         repositorioTraslado.getEntityManager().getTransaction().begin();
@@ -109,21 +111,22 @@ public RutaDTO agregar(RutaDTO rutaDTO){
         repositorioTraslado.getEntityManager().close();
         return traslados.stream().map(trasladoMapper::mapear).toList();
     }
-@Override
-    public List<TrasladoDTO> trasladosDeColaborador(Long colaboradorId, Integer mes, Integer anio){
+
+    @Override
+    public List<TrasladoDTO> trasladosDeColaborador(Long colaboradorId, Integer mes, Integer anio) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         repositorioTraslado.setEntityManager(entityManager);
         repositorioTraslado.getEntityManager().getTransaction().begin();
         List<Traslado> traslados = repositorioTraslado.buscarXColaborador(colaboradorId);
         List<Traslado> trasladosFiltrados = traslados.stream().filter(t -> t.getFechaTraslado().getMonthValue() == mes &&
-                                                                        t.getFechaTraslado().getYear() == anio).toList();
+                t.getFechaTraslado().getYear() == anio).toList();
         repositorioTraslado.getEntityManager().getTransaction().commit();
         repositorioTraslado.getEntityManager().close();
-        return trasladosFiltrados.stream().map(trasladoMapper :: mapear).toList();
-}
+        return trasladosFiltrados.stream().map(trasladoMapper::mapear).toList();
+    }
 
-@Override
-    public void trasladoRetirado(Long trasladoId){
+    @Override
+    public void trasladoRetirado(Long trasladoId) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         repositorioTraslado.setEntityManager(entityManager);
         repositorioTraslado.getEntityManager().getTransaction().begin();
@@ -133,29 +136,29 @@ public RutaDTO agregar(RutaDTO rutaDTO){
         fachadaViandas.modificarEstado(traslado.getQrVianda(), EstadoViandaEnum.EN_TRASLADO);
         repositorioTraslado.getEntityManager().getTransaction().commit();
         repositorioTraslado.getEntityManager().close();
-        this.modificarEstadoTraslado(trasladoId,EstadoTrasladoEnum.EN_VIAJE);
-}
-
-@Override
-    public void trasladoDepositado(Long trasladoId){
-    EntityManager entityManager = entityManagerFactory.createEntityManager();
-    repositorioTraslado.setEntityManager(entityManager);
-    repositorioTraslado.getEntityManager().getTransaction().begin();
-    TrasladoDTO traslado = trasladoMapper.mapear(repositorioTraslado.buscarXId(trasladoId));
-    if(!traslado.getStatus().equals(EstadoTrasladoEnum.EN_VIAJE)){
-        repositorioTraslado.getEntityManager().getTransaction().rollback();
-        repositorioTraslado.getEntityManager().close();
-        throw new NoSuchElementException("La vianda "+traslado.getQrVianda()+" no fue retirada");
+        this.modificarEstadoTraslado(trasladoId, EstadoTrasladoEnum.EN_VIAJE);
     }
-    fachadaHeladeras.depositar(traslado.getHeladeraDestino(), traslado.getQrVianda());
-    fachadaViandas.modificarHeladera(traslado.getQrVianda(),traslado.getHeladeraDestino());
-    fachadaViandas.modificarEstado(traslado.getQrVianda(), EstadoViandaEnum.DEPOSITADA);
-    repositorioTraslado.getEntityManager().getTransaction().commit();
-    repositorioTraslado.getEntityManager().close();
-    this.modificarEstadoTraslado(trasladoId,EstadoTrasladoEnum.ENTREGADO);
-}
 
-    public List<RutaDTO> rutas(){
+    @Override
+    public void trasladoDepositado(Long trasladoId) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        repositorioTraslado.setEntityManager(entityManager);
+        repositorioTraslado.getEntityManager().getTransaction().begin();
+        TrasladoDTO traslado = trasladoMapper.mapear(repositorioTraslado.buscarXId(trasladoId));
+        if (!traslado.getStatus().equals(EstadoTrasladoEnum.EN_VIAJE)) {
+            repositorioTraslado.getEntityManager().getTransaction().rollback();
+            repositorioTraslado.getEntityManager().close();
+            throw new NoSuchElementException("La vianda " + traslado.getQrVianda() + " no fue retirada");
+        }
+        fachadaHeladeras.depositar(traslado.getHeladeraDestino(), traslado.getQrVianda());
+        fachadaViandas.modificarHeladera(traslado.getQrVianda(), traslado.getHeladeraDestino());
+        fachadaViandas.modificarEstado(traslado.getQrVianda(), EstadoViandaEnum.DEPOSITADA);
+        repositorioTraslado.getEntityManager().getTransaction().commit();
+        repositorioTraslado.getEntityManager().close();
+        this.modificarEstadoTraslado(trasladoId, EstadoTrasladoEnum.ENTREGADO);
+    }
+
+    public List<RutaDTO> rutas() {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         repositorioRuta.setEntityManager(entityManager);
         repositorioRuta.getEntityManager().getTransaction().begin();
@@ -165,7 +168,7 @@ public RutaDTO agregar(RutaDTO rutaDTO){
         return rutas;
     }
 
-    public List<TrasladoDTO> traslados(){
+    public List<TrasladoDTO> traslados() {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         repositorioTraslado.setEntityManager(entityManager);
         repositorioTraslado.getEntityManager().getTransaction().begin();
@@ -175,7 +178,7 @@ public RutaDTO agregar(RutaDTO rutaDTO){
         return traslados;
     }
 
-    public void modificarEstadoTraslado(Long trasladoId, EstadoTrasladoEnum nuevoEstado) throws NoSuchElementException{
+    public void modificarEstadoTraslado(Long trasladoId, EstadoTrasladoEnum nuevoEstado) throws NoSuchElementException {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         repositorioTraslado.setEntityManager(entityManager);
         repositorioTraslado.getEntityManager().getTransaction().begin();
@@ -184,47 +187,52 @@ public RutaDTO agregar(RutaDTO rutaDTO){
         repositorioTraslado.getEntityManager().close();
     }
 
-    public void clear(){
+    public void clear() {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         repositorioRuta.setEntityManager(entityManager);
         repositorioTraslado.setEntityManager(entityManager);
         entityManager.getTransaction().begin();
-        try{
+        try {
             entityManager.createQuery("DELETE FROM Traslado").executeUpdate();
             entityManager.createQuery("DELETE FROM Ruta ").executeUpdate();
             entityManager.getTransaction().commit();
-        } catch (RuntimeException e){
-            if(entityManager.getTransaction().isActive())
+        } catch (RuntimeException e) {
+            if (entityManager.getTransaction().isActive())
                 entityManager.getTransaction().rollback();
             throw e;
-        }finally {
+        } finally {
             entityManager.close();
         }
     }
 
-    public long cantRutas(){
+    public long cantRutas() {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         repositorioRuta.setEntityManager(entityManager);
         Long count = 0L;
         entityManager.getTransaction().begin();
-        try{
+        try {
             count = (Long) entityManager.createQuery("SELECT COUNT(id) FROM Ruta").getSingleResult();
             entityManager.getTransaction().commit();
-        }catch (RuntimeException e){
-            if(entityManager.getTransaction().isActive())
+        } catch (RuntimeException e) {
+            if (entityManager.getTransaction().isActive())
                 entityManager.getTransaction().rollback();
-         throw e;
-        }finally {
+            throw e;
+        } finally {
             entityManager.close();
         }
         return count;
     }
 
 
-@Override
-public void setHeladerasProxy(FachadaHeladeras fachadaHeladeras){this.fachadaHeladeras = fachadaHeladeras;}
-@Override
-public void setViandasProxy(FachadaViandas fachadaViandas){this.fachadaViandas = fachadaViandas;}
+    @Override
+    public void setHeladerasProxy(FachadaHeladeras fachadaHeladeras) {
+        this.fachadaHeladeras = fachadaHeladeras;
+    }
+
+    @Override
+    public void setViandasProxy(FachadaViandas fachadaViandas) {
+        this.fachadaViandas = fachadaViandas;
+    }
 
 
     public RepositorioRuta getRepositorioRuta() {

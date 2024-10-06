@@ -21,13 +21,16 @@ public class Ruta {
     @NotNull
     private Integer heladeraDestino;
 
-     public Ruta(Long colaboradorId, Integer heladeraOrigen, Integer heladeraDestino) {
+    public Ruta(Long colaboradorId, Integer heladeraOrigen, Integer heladeraDestino) {
         this.colaboradorId = colaboradorId;
         this.heladeraOrigen = heladeraOrigen;
         this.heladeraDestino = heladeraDestino;
     }
 
-    public Ruta(){};
+    public Ruta() {
+    }
+
+    ;
 
     public Long getId() {
         return id;

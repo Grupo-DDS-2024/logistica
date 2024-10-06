@@ -9,7 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.NoSuchElementException;
 
 public class DepositarCotroller implements Handler {
-    private  Fachada fachada;
+    private Fachada fachada;
+
     public DepositarCotroller(Fachada fachada) {
         this.fachada = fachada;
     }
@@ -17,12 +18,12 @@ public class DepositarCotroller implements Handler {
 
     @Override
     public void handle(@NotNull Context context) throws Exception {
-        try{
+        try {
             String trasladoId = context.pathParam("trasladoId");
             Long id = Long.parseLong(trasladoId);
             fachada.trasladoDepositado(id);
             context.result("Vianda depositada correctamente");
-        }catch (NoSuchElementException e){
+        } catch (NoSuchElementException e) {
             throw new BadRequestResponse(e.getMessage());
         }
 

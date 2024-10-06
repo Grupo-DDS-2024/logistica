@@ -41,7 +41,7 @@ public class ViandasProxy implements FachadaViandas {
     @SneakyThrows
     @Override
     public ViandaDTO modificarEstado(String s, EstadoViandaEnum estadoViandaEnum) throws NoSuchElementException {
-        Response<ViandaDTO> execute = service.modificarEstado(s,estadoViandaEnum).execute();
+        Response<ViandaDTO> execute = service.modificarEstado(s, estadoViandaEnum).execute();
 
         if (execute.isSuccessful()) {
             return execute.body();
@@ -73,7 +73,8 @@ public class ViandasProxy implements FachadaViandas {
     }
 
     @Override
-    public void setHeladerasProxy(FachadaHeladeras fachadaHeladeras) {}
+    public void setHeladerasProxy(FachadaHeladeras fachadaHeladeras) {
+    }
 
     @Override
     public boolean evaluarVencimiento(String s) throws NoSuchElementException {
@@ -83,7 +84,7 @@ public class ViandasProxy implements FachadaViandas {
     @SneakyThrows
     @Override
     public ViandaDTO modificarHeladera(String s, int i) {
-        Response<ViandaDTO> execute = service.modificarHeladera(s,i).execute();
+        Response<ViandaDTO> execute = service.modificarHeladera(s, i).execute();
 
         if (execute.isSuccessful()) {
             return execute.body();

@@ -25,44 +25,44 @@ public class RepositorioTraslado {
 
     private EntityManager entityManager;
 
-    public RepositorioTraslado(EntityManagerFactory entityManagerFactory){
+    public RepositorioTraslado(EntityManagerFactory entityManagerFactory) {
         this.entityManager = entityManagerFactory.createEntityManager();
     }
 
-    public RepositorioTraslado(){
+    public RepositorioTraslado() {
 
     }
 
-    public Traslado guardar(Traslado traslado){
-        if(Objects.isNull(traslado.getId())){
+    public Traslado guardar(Traslado traslado) {
+        if (Objects.isNull(traslado.getId())) {
             entityManager.persist(traslado);
         }
         return traslado;
     }
 
-    public Traslado buscarXId(Long id){
-        Traslado traslado = entityManager.find(Traslado.class,id);
-        if(traslado == null){
+    public Traslado buscarXId(Long id) {
+        Traslado traslado = entityManager.find(Traslado.class, id);
+        if (traslado == null) {
             throw new NoSuchElementException("El traslado con id:" + id + " no existe");
         }
         return traslado;
     }
 
-    public List<Traslado> buscarXColaborador (Long colaboradorId){
+    public List<Traslado> buscarXColaborador(Long colaboradorId) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Traslado> cq = cb.createQuery(Traslado.class);
         Root<Traslado> traslado = cq.from(Traslado.class);
 
-        Predicate predicadoColabId = cb.equal(traslado.get("colaboradorId"),colaboradorId);
+        Predicate predicadoColabId = cb.equal(traslado.get("colaboradorId"), colaboradorId);
         cq.where(predicadoColabId);
-        List<Traslado> traslColab  = entityManager.createQuery(cq).getResultList();
-        if(traslColab.isEmpty()){
-            throw new NoSuchElementException("El colaborador con Id:"+ colaboradorId +"No tiene ningun traslado asignado");
+        List<Traslado> traslColab = entityManager.createQuery(cq).getResultList();
+        if (traslColab.isEmpty()) {
+            throw new NoSuchElementException("El colaborador con Id:" + colaboradorId + "No tiene ningun traslado asignado");
         }
         return traslColab;
     }
 
-    public List<Traslado> todos(){
+    public List<Traslado> todos() {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Traslado> cq = cb.createQuery(Traslado.class);
         Root<Traslado> root = cq.from(Traslado.class);

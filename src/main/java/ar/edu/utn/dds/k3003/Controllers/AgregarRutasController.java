@@ -16,12 +16,12 @@ public class AgregarRutasController implements Handler {
     private StepMeterRegistry stepMeterRegistry;
     private Counter contadorRutas;
 
-    public AgregarRutasController(Fachada fachada, StepMeterRegistry stepMeterRegistry){
+    public AgregarRutasController(Fachada fachada, StepMeterRegistry stepMeterRegistry) {
         this.fachada = fachada;
         this.stepMeterRegistry = stepMeterRegistry;
-        this.contadorRutas=stepMeterRegistry.counter("dds.rutasCreadas");
+        this.contadorRutas = stepMeterRegistry.counter("ddsLogistica.rutasCreadas");
 
-        var gauge = stepMeterRegistry.gauge("dds.CantRutasEnBD",fachada,f -> f.cantRutas());
+        var gauge = stepMeterRegistry.gauge("ddsLogistica.CantRutasEnBD", fachada, f -> f.cantRutas());
     }
 
 
@@ -30,7 +30,7 @@ public class AgregarRutasController implements Handler {
         RutaDTO rutaDTO = context.bodyAsClass(RutaDTO.class);
         var rutaDTOrta = fachada.agregar(rutaDTO);
         contadorRutas.increment();
-        System.out.println("Gauge value (initial): " + stepMeterRegistry.get("dds.CantRutasEnBD").gauge().value());
+        System.out.println("Gauge value (initial): " + stepMeterRegistry.get("ddsLogistica.CantRutasEnBD").gauge().value());
         context.json(rutaDTOrta);
         context.status(HttpStatus.CREATED);
 

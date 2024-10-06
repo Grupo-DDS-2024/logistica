@@ -23,23 +23,25 @@ public class RepositorioRuta {
     }
 
     private EntityManager entityManager;
-    public RepositorioRuta(EntityManagerFactory entityManagerFactory){
+
+    public RepositorioRuta(EntityManagerFactory entityManagerFactory) {
         this.entityManager = entityManagerFactory.createEntityManager();
     }
-    public RepositorioRuta(){
+
+    public RepositorioRuta() {
     }
 
-    public Ruta guardar(Ruta ruta){
-        if(Objects.isNull(ruta.getId())){
+    public Ruta guardar(Ruta ruta) {
+        if (Objects.isNull(ruta.getId())) {
             this.entityManager.persist(ruta);
         }
         return ruta;
     }
 
-    public Ruta buscarXId(Long id){
-        Ruta ruta = entityManager.find(Ruta.class,id);
-        if(ruta == null){
-            throw  new NoSuchElementException("La ruta con id:" + id + " no existe");
+    public Ruta buscarXId(Long id) {
+        Ruta ruta = entityManager.find(Ruta.class, id);
+        if (ruta == null) {
+            throw new NoSuchElementException("La ruta con id:" + id + " no existe");
         }
         return ruta;
     }
@@ -49,7 +51,7 @@ public class RepositorioRuta {
 //                r.getHeladeraDestino().equals(heladeraDestino)).toList();
 //    }
 
-    public List<Ruta> buscarXHeladera(Integer heladeraOrigen, Integer heladeraDestino){
+    public List<Ruta> buscarXHeladera(Integer heladeraOrigen, Integer heladeraDestino) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Ruta> cq = cb.createQuery(Ruta.class);
         Root<Ruta> ruta = cq.from(Ruta.class);
@@ -57,11 +59,11 @@ public class RepositorioRuta {
         Predicate predicadoHeladeraOrig = cb.equal(ruta.get("heladeraOrigen"), heladeraOrigen);
         Predicate predicadoHeladeraDest = cb.equal(ruta.get("heladeraDestino"), heladeraDestino);
 
-        cq.where(cb.and(predicadoHeladeraOrig,predicadoHeladeraDest));
+        cq.where(cb.and(predicadoHeladeraOrig, predicadoHeladeraDest));
         return entityManager.createQuery(cq).getResultList();
     }
 
-    public List<Ruta> todos(){
+    public List<Ruta> todos() {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Ruta> cq = cb.createQuery(Ruta.class);
         Root<Ruta> ruta = cq.from(Ruta.class);
