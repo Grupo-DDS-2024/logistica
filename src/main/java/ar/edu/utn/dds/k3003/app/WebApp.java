@@ -4,6 +4,7 @@ package ar.edu.utn.dds.k3003.app;
 import ar.edu.utn.dds.k3003.Clientes.HeladeraProxy;
 import ar.edu.utn.dds.k3003.Clientes.ViandasProxy;
 import ar.edu.utn.dds.k3003.Controllers.*;
+import ar.edu.utn.dds.k3003.clients.ColaboradoresProxy;
 import ar.edu.utn.dds.k3003.facades.dtos.Constants;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,6 +40,7 @@ public class WebApp {
         ObjectMapper objectMapper = createObjectMapper();
         fachada.setViandasProxy(new ViandasProxy(objectMapper));
         fachada.setHeladerasProxy(new HeladeraProxy(objectMapper));
+        fachada.setFachadaColaboradores(new ColaboradoresProxy(objectMapper));
 
         var DDUtils = new DataDogUtils("Logistica");
         var registro = DDUtils.getRegistro();
@@ -75,6 +77,8 @@ public class WebApp {
         app.post("/retirar/{trasladoId}", new RetirarController(fachada));
         app.get("/traslados/search/{colaboradorId}", new ListaTrasladosXColaborador(fachada));
         app.get("/clear", new DBController(fachada));
+        app.post("/depositar", new DepositarSinTraslado(fachada));
+        app.post("/retirar", new RetirarSinTraslado(fachada));
     }
 
     public static ObjectMapper createObjectMapper() {

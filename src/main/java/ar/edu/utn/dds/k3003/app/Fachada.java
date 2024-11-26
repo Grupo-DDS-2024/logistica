@@ -11,6 +11,8 @@ import ar.edu.utn.dds.k3003.repositorios.RepositorioRuta;
 import ar.edu.utn.dds.k3003.repositorios.RepositorioTraslado;
 import ar.edu.utn.dds.k3003.repositorios.RutaMapper;
 import ar.edu.utn.dds.k3003.repositorios.TrasladoMapper;
+import ar.edu.utn.dds.k3003.clients.ColaboradoresProxy;
+import lombok.Setter;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -27,6 +29,8 @@ public class Fachada implements FachadaLogistica {
     private final TrasladoMapper trasladoMapper;
     private FachadaViandas fachadaViandas;
     private FachadaHeladeras fachadaHeladeras;
+   @Setter
+    private ColaboradoresProxy fachadaColaboradores;
 
     public Fachada(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
@@ -97,7 +101,9 @@ public class Fachada implements FachadaLogistica {
         repositorioTraslado.getEntityManager().getTransaction().commit();
         repositorioTraslado.getEntityManager().close();
         repositorioRuta.getEntityManager().close();
-        return trasladoMapper.mapear(traslado);
+        TrasladoDTO trasladoDto = trasladoMapper.mapear(traslado);
+        fachadaColaboradores.notificar(trasladoDto);
+        return trasladoDto;
 
     }
 
@@ -257,6 +263,31 @@ public class Fachada implements FachadaLogistica {
 
     public FachadaHeladeras getFachadaHeladeras() {
         return fachadaHeladeras;
+    }
+
+    public void depositarVianda(int heladeraId, String codigoQR) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        repositorioTraslado.setEntityManager(entityManager);
+        repositorioTraslado.getEntityManager().getTransaction().begin();
+
+        fachadaHeladeras.depositar(heladeraId, codigoQR);
+        fachadaViandas.modificarHeladera(codigoQR, heladeraId);
+        fachadaViandas.modificarEstado(codigoQR, EstadoViandaEnum.DEPOSITADA);
+        repositorioTraslado.getEntityManager().getTransaction().commit();
+        repositorioTraslado.getEntityManager().close();
+
+    }
+
+    public void retirarVianda(int heladeraId, String codigoQR) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        repositorioTraslado.setEntityManager(entityManager);
+        repositorioTraslado.getEntityManager().getTransaction().begin();
+        RetiroDTO retiro = new RetiroDTO(codigoQR, "321", heladeraId);
+        fachadaHeladeras.retirar(retiro);
+        fachadaViandas.modificarEstado(codigoQR, EstadoViandaEnum.RETIRADA);
+        repositorioTraslado.getEntityManager().getTransaction().commit();
+        repositorioTraslado.getEntityManager().close();
+
     }
 }
 
