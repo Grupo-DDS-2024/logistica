@@ -58,7 +58,7 @@ public class RepositorioTraslado {
         cq.where(predicadoColabId);
         List<Traslado> traslColab = entityManager.createQuery(cq).getResultList();
         if (traslColab.isEmpty()) {
-            throw new NoSuchElementException("El colaborador con Id:" + colaboradorId + "No tiene ningun traslado asignado");
+            throw new NoSuchElementException("El colaborador con ID: " + colaboradorId + " no tiene ningun traslado asignado.");
         }
         return traslColab;
     }

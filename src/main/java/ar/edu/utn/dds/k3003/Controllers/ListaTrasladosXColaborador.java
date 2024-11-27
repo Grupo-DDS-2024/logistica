@@ -6,7 +6,9 @@ import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ListaTrasladosXColaborador implements Handler {
     private  Fachada fachada;
@@ -19,7 +21,16 @@ public class ListaTrasladosXColaborador implements Handler {
         Long colaboradorId = Long.parseLong(context.pathParam("colaboradorId"));
         Integer mes = Integer.parseInt(context.queryParam("mes"));
         Integer anio = Integer.parseInt(context.queryParam("anio"));
-        List<TrasladoDTO> traslados = fachada.trasladosDeColaborador(colaboradorId,mes,anio);
-        context.json(traslados);
+        try {
+            Map<String, Object> response = new HashMap<>();
+            List<TrasladoDTO> traslados = fachada.trasladosDeColaborador(colaboradorId,mes,anio);
+            response.put("Mensaje", traslados);
+            context.status(200).json(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("Mensaje", e.getMessage());
+            context.status(404).json(response);
+        }
+
     }
 }
