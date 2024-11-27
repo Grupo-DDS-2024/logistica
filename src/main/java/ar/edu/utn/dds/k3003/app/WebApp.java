@@ -14,10 +14,13 @@ import io.javalin.Javalin;
 import io.javalin.json.JavalinJackson;
 import io.javalin.micrometer.MicrometerPlugin;
 import ar.edu.utn.dds.k3003.utils.DataDogUtils;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.step.StepMeterRegistry;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -52,6 +55,7 @@ public class WebApp {
         final var micrometerPlugin = new MicrometerPlugin(config -> config.registry = registro);
 
 
+
         var port = Integer.parseInt(env.getOrDefault("PORT", "8083"));
 
         var app = Javalin.create(config -> {
@@ -79,6 +83,7 @@ public class WebApp {
         app.get("/clear", new DBController(fachada));
         app.post("/depositar", new DepositarSinTraslado(fachada));
         app.post("/retirar", new RetirarSinTraslado(fachada));
+        app.get("/retirosDelDia", new retirosDelDiaController(fachada));
     }
 
     public static ObjectMapper createObjectMapper() {

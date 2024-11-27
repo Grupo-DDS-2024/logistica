@@ -10,6 +10,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -74,6 +75,19 @@ public class RepositorioTraslado {
         Traslado trasladoAModificar = this.buscarXId(trasladoId);
         trasladoAModificar.setStatus(nuevoEstado);
         entityManager.merge(trasladoAModificar);
+    }
+
+    public Long trasladosDelDia(){
+        Integer dia = LocalDateTime.now().getDayOfMonth();
+        Integer mes = LocalDateTime.now().getMonthValue();
+        Integer anio = LocalDateTime.now().getYear();
+
+        Long count = entityManager.createQuery(
+                "SELECT COUNT(t) FROM Traslado t WHERE (t.status = 'EN_VIAJE' OR t.status = 'ENTREGADO') AND " +
+                        "FUNCTION('DAY',t.fechaTraslado) = :dia AND " +
+                        "FUNCTION('MONTH',t.fechaTraslado) = :mes AND " +
+                        "FUNCTION('YEAR',t.fechaTraslado) = :anio",Long.class).setParameter("dia",dia).setParameter("mes",mes).setParameter("anio",anio).getSingleResult();
+        return count;
     }
 
 

@@ -17,6 +17,7 @@ import lombok.Setter;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
@@ -31,6 +32,8 @@ public class Fachada implements FachadaLogistica {
     private FachadaHeladeras fachadaHeladeras;
    @Setter
     private ColaboradoresProxy fachadaColaboradores;
+   private int cantidadDeRetirosDelDia;
+   private LocalDate fechaUltimaLlamada;
 
     public Fachada(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
@@ -38,6 +41,8 @@ public class Fachada implements FachadaLogistica {
         this.rutaMapper = new RutaMapper();
         this.repositorioTraslado = new RepositorioTraslado();
         this.trasladoMapper = new TrasladoMapper();
+        this.cantidadDeRetirosDelDia=0;
+        fechaUltimaLlamada = LocalDate.now();
     }
 
     public Fachada() {
@@ -143,6 +148,9 @@ public class Fachada implements FachadaLogistica {
         repositorioTraslado.getEntityManager().getTransaction().commit();
         repositorioTraslado.getEntityManager().close();
         this.modificarEstadoTraslado(trasladoId, EstadoTrasladoEnum.EN_VIAJE);
+        verificarDia();
+        this.cantidadDeRetirosDelDia +=1;
+
     }
 
     @Override
@@ -287,7 +295,21 @@ public class Fachada implements FachadaLogistica {
         fachadaViandas.modificarEstado(codigoQR, EstadoViandaEnum.RETIRADA);
         repositorioTraslado.getEntityManager().getTransaction().commit();
         repositorioTraslado.getEntityManager().close();
+        verificarDia();
+        this.cantidadDeRetirosDelDia +=1;
 
+
+    }
+
+    public Integer trasladosDelDia(){
+        return this.cantidadDeRetirosDelDia;
+    }
+
+    public void verificarDia(){
+        if(!LocalDate.now().equals(fechaUltimaLlamada)){
+            this.fechaUltimaLlamada=LocalDate.now();
+            this.cantidadDeRetirosDelDia =0;
+        }
     }
 }
 
