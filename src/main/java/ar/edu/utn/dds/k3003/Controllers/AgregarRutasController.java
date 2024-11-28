@@ -2,6 +2,7 @@ package ar.edu.utn.dds.k3003.Controllers;
 
 import ar.edu.utn.dds.k3003.app.Fachada;
 import ar.edu.utn.dds.k3003.facades.dtos.RutaDTO;
+import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import io.javalin.http.HttpStatus;
@@ -28,11 +29,13 @@ public class AgregarRutasController implements Handler {
     @Override
     public void handle(@NotNull Context context) throws Exception {
         RutaDTO rutaDTO = context.bodyAsClass(RutaDTO.class);
-        var rutaDTOrta = fachada.agregar(rutaDTO);
-        contadorRutas.increment();
-        System.out.println("Gauge value (initial): " + stepMeterRegistry.get("ddsLogistica.CantRutasEnBD").gauge().value());
-        context.json(rutaDTOrta);
-        context.status(HttpStatus.CREATED);
-
+        try {
+            var rutaDTOrta = fachada.agregar(rutaDTO);
+            contadorRutas.increment();
+            System.out.println("Gauge value (initial): " + stepMeterRegistry.get("ddsLogistica.CantRutasEnBD").gauge().value());
+            context.status(200).json(rutaDTOrta);
+        } catch (Exception e) {
+            throw new BadRequestResponse("Error de solicitud.");
+        }
     }
 }
