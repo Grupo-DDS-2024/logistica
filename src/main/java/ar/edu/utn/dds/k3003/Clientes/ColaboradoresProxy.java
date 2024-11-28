@@ -1,4 +1,4 @@
-package ar.edu.utn.dds.k3003.clients;
+package ar.edu.utn.dds.k3003.Clientes;
 
 import ar.edu.utn.dds.k3003.Clientes.ColaboradoresRetrofitClient;
 import ar.edu.utn.dds.k3003.facades.dtos.TrasladoDTO;
