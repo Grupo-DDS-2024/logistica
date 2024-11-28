@@ -11,7 +11,7 @@ import ar.edu.utn.dds.k3003.repositorios.RepositorioRuta;
 import ar.edu.utn.dds.k3003.repositorios.RepositorioTraslado;
 import ar.edu.utn.dds.k3003.repositorios.RutaMapper;
 import ar.edu.utn.dds.k3003.repositorios.TrasladoMapper;
-import ar.edu.utn.dds.k3003.clients.ColaboradoresProxy;
+import ar.edu.utn.dds.k3003.Clientes.ColaboradoresProxy;
 import lombok.Setter;
 
 import javax.persistence.EntityManager;

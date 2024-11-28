@@ -4,7 +4,7 @@ package ar.edu.utn.dds.k3003.app;
 import ar.edu.utn.dds.k3003.Clientes.HeladeraProxy;
 import ar.edu.utn.dds.k3003.Clientes.ViandasProxy;
 import ar.edu.utn.dds.k3003.Controllers.*;
-import ar.edu.utn.dds.k3003.clients.ColaboradoresProxy;
+import ar.edu.utn.dds.k3003.Clientes.ColaboradoresProxy;
 import ar.edu.utn.dds.k3003.facades.dtos.Constants;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
